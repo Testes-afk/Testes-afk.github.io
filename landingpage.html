@@ -1,0 +1,60 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <script src="scripts.js" defer></script> <!-- Incluindo o script -->
+
+</head>
+<body>
+    <h1>Registrar Presença</h1>
+    <form id="landingForm">
+        <label for="numAluno">Número do Aluno:</label>
+        <input type="text" id="numAluno" name="numAluno" required><br><br>
+
+        <label for="sala">Sala:</label>
+        <input type="text" id="sala" name="sala" required><br><br>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        document.getElementById('landingForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const numAluno = document.getElementById('numAluno').value;
+            const sala = document.getElementById('sala').value;
+
+            if (!numAluno || !sala) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            // Obter o IP do usuário usando uma API pública
+            let userIp = 'Desconhecido';
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                userIp = data.ip;
+            } catch (error) {
+                console.error('Erro ao obter o IP:', error);
+            }
+
+            // Gerar a data e hora atuais
+            const currentDateTime = new Date().toISOString();
+
+            // Armazenar os dados no LocalStorage antes de redirecionar
+            const entry = { numAluno, sala, dataHora: currentDateTime, ip: userIp };
+            const existingEntries = JSON.parse(localStorage.getItem('entries')) || [];
+            existingEntries.push(entry);
+            localStorage.setItem('entries', JSON.stringify(existingEntries));
+
+            // Redirecionar para confirmacao.html
+            window.location.href = 'confirmacao.html';
+        });
+    </script>
+</body>
+</html>
