@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page</title>
     <script src="scripts.js" defer></script> <!-- Incluindo o script -->
-
 </head>
 <body>
     <h1>Registrar Presença</h1>
     <form id="landingForm">
         <label for="numAluno">Número do Aluno:</label>
-        <input type="text" id="numAluno" name="numAluno" required><br><br>
+        <input type="text" id="numAluno" name="numAluno" readonly required><br><br>
 
         <label for="sala">Sala:</label>
-        <input type="text" id="sala" name="sala" required><br><br>
+        <input type="text" id="sala" name="sala" readonly required><br><br>
 
         <button type="submit">Enviar</button>
     </form>
 
     <script>
+        // Configurando valores iniciais dos campos
+        document.getElementById('numAluno').value = '12345'; // Exemplo de número de aluno
+        document.getElementById('sala').value = 'A1'; // Exemplo de sala
+
         document.getElementById('landingForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
@@ -55,6 +56,11 @@
             // Redirecionar para confirmacao.html
             window.location.href = 'confirmacao.html';
         });
+
+        // Exemplo de como alterar os valores usando script
+        // Esses comandos só podem ser executados via script
+        document.getElementById('numAluno').value = '67890'; // Atualizando número do aluno
+        document.getElementById('sala').value = 'B2'; // Atualizando sala
     </script>
 </body>
 </html>
