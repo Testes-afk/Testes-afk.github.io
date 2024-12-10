@@ -8,6 +8,7 @@
 <body>
     <h1>Lista de Presenças</h1>
     <ul id="presenceList"></ul>
+    <button id="downloadCsv">Download CSV</button>
 
     <script>
         // Recupera os dados da URL
@@ -32,6 +33,44 @@
             const listItem = document.createElement('li');
             listItem.textContent = `${entry.numAluno}; ${entry.sala}; ${new Date(entry.dataHora).toLocaleString()}; ${entry.ip}`;
             presenceList.appendChild(listItem);
+        });
+
+        // Função para gerar e baixar o CSV
+        document.getElementById('downloadCsv').addEventListener('click', () => {
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            if (entries.length === 0) {
+                alert('Nenhuma presença marcada para gerar o CSV.');
+                return;
+            }
+
+            // Cabeçalhos do CSV
+            const headers = ['Número do Aluno', 'Sala', 'Data e Hora', 'IP'];
+            const csvRows = [headers.join(',')];
+
+            // Adiciona os dados ao CSV
+            entries.forEach(entry => {
+                const row = [
+                    entry.numAluno,
+                    entry.sala,
+                    new Date(entry.dataHora).toLocaleString(),
+                    entry.ip
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            // Converte para uma string e cria um blob
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+
+            // Cria um link temporário para baixar o arquivo
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'lista_presencas.csv';
+            link.click();
+
+            // Limpa o objeto URL após o download
+            URL.revokeObjectURL(url);
         });
     </script>
 </body>
