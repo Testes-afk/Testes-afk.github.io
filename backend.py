@@ -4,6 +4,9 @@ from datetime import datetime
 # Caminho do arquivo CSV
 caminho_arquivo = r"C:\Users\vitor\OneDrive\Desktop\ADS\lista_presencas.csv"
 
+caminho_arquivo_validas = r"C:\Users\vitor\OneDrive\Desktop\ADS\entradas_validas.csv"
+
+
 # Lista de intervalos de horários
 intervalos = [
     ("09:00:00", "10:00:00"), ("10:00:00", "11:00:00"), ("11:00:00", "12:00:00"),
@@ -92,10 +95,35 @@ def separar_entradas_por_intervalo(entradas):
 
     return entradas_validas, entradas_invalidas
 
+def criar_csv_entradas_validas(caminho_csv_validas, entradas_validas):
+    """
+    Cria um arquivo CSV com base nas entradas válidas.
+
+    :param caminho_csv_validas: Caminho para o novo arquivo CSV.
+    :param entradas_validas: Lista de entradas válidas.
+    """
+    with open(caminho_csv_validas, mode='w', newline='', encoding='utf-8') as csvfile:
+        escritor = csv.writer(csvfile)
+
+        # Cabeçalhos do CSV original
+        headers = ["Número do Aluno", "Sala", "Data e Hora", "IP"]
+        escritor.writerow(headers)
+
+        # Escrever as entradas válidas
+        for entrada in entradas_validas:
+            escritor.writerow([
+                entrada["Número do Aluno"],
+                entrada["Sala"],
+                f"{entrada['Data']} {entrada['Hora']}",  # Concatenar Data e Hora
+                entrada["IP"]
+            ])
+
+
 
 if __name__ == "__main__":
     caminho_arquivo = r"C:\Users\vitor\OneDrive\Desktop\ADS\lista_presencas.csv"
     entradas_ordenadas = ordenar_entradas(caminho_arquivo)
+    criar_csv= True
 
     entradas_validas, entradas_invalidas = separar_entradas_por_intervalo(entradas_ordenadas)
 
@@ -106,4 +134,8 @@ if __name__ == "__main__":
     print("\nEntradas inválidas:")
     for entrada in entradas_invalidas:
         print(entrada)
+
+    if criar_csv:
+       criar_csv_entradas_validas(caminho_arquivo_validas, entradas_validas)
+       print(f"\nArquivo com entradas válidas criado em: {caminho_arquivo_validas}")
 
