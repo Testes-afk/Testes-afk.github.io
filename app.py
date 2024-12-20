@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import util.database as database
+import database
 import frontend
 
 app = Flask(__name__)
@@ -29,7 +29,8 @@ def marcar_presenca():
         return jsonify({"message": "Erro ao conectar ao banco de dados"}), 500
     
     # Inserindo os dados no banco de dados
-    database.guardar_presenca(conn, num_aluno, sala, request.remote_addr)
+    # database.guardar_presenca(conn, num_aluno, sala, request.remote_addr)
+    frontend.run_remote(num_aluno, request.remote_addr)
 
 if __name__ == '__main__':
     app.run(debug=True)

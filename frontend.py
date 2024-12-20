@@ -1,7 +1,7 @@
 import cv2
 from pyzbar.pyzbar import decode
 import webbrowser
-from util import database
+import database
 
 # Função para processar o QR Code
 def processar_qr_code(imagem):
@@ -55,9 +55,50 @@ def run():
 
     if sala != None:
         if num_aluno != None and sala != None:
-            conn = database.get_db_connection()
             # Inserindo os dados no banco de dados
-            database.guardar_presenca(conn, num_aluno, sala, 'íp') #request.remote_addr)
+            database.guardar_presenca(num_aluno, sala, 'ip2') #request.remote_addr)
+        return num_aluno, qr_code_texto
+    return None, None
+
+
+def run_remote(num_aluno, ip):
+
+    # Abrir a câmera
+    cap = cv2.VideoCapture(0)  # 0 normalmente é a webcam padrão
+
+    while True:
+        # Captura frame a frame
+        ret, frame = cap.read()
+        
+        if not ret:
+            print("Falha ao capturar imagem.")
+            break
+        
+        # Processa o QR Code no frame
+        qr_code_texto = processar_qr_code(frame)
+        
+        # Exibe o vídeo ao vivo com a indicação de que foi detectado o QR Code
+        cv2.imshow('Escaneando QR Code', frame)
+        
+        if qr_code_texto:
+            # Redireciona para a página, preenchendo os campos "numAluno", "sala" e "attendance"
+            webbrowser.open(f'http://127.0.0.1:5000/landingpage.html?numAluno={num_aluno}&sala={qr_code_texto}')
+            sala = qr_code_texto
+            break  # Interrompe após encontrar o primeiro QR code
+            
+
+        # Se pressionar 'q', o loop será interrompido
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Libera a câmera e fecha as janelas
+    cap.release()
+    cv2.destroyAllWindows()
+
+    if sala != None:
+        if num_aluno != None and sala != None:
+            # Inserindo os dados no banco de dados
+            database.guardar_presenca(num_aluno, sala, ip)
         return num_aluno, qr_code_texto
     return None, None
 
